@@ -12,11 +12,13 @@ openai.api_key = os.environ.get('OPENAI_API_KEY')
 # Read PDF file
 def read_pdf(file_path):
     with open(file_path, 'rb') as file:
-        reader = PyPDF2.PdfFileReader(file)
+        reader = PyPDF2.PdfReader(file)
         pdf_text = ''
-        for page_num in range(reader.numPages):
-            pdf_text += reader.getPage(page_num).extractText()
+        for page_num in range(len(reader.pages)):
+            page = reader.pages[page_num]
+            pdf_text += page.extract_text()
     return pdf_text
+
 
 # Read CSV file
 def read_csv(file_path):
@@ -26,7 +28,7 @@ def read_csv(file_path):
 
 def generate_response(prompt, model="gpt-3.5-turbo-0301", max_tokens=64):
     # Load file paths from JSON file
-    with open("file_paths.json") as file:
+    with open("knowledgeBasePath.json") as file:
         file_paths = json.load(file)
 
     pdf_data = ''
@@ -57,6 +59,6 @@ def generate_response(prompt, model="gpt-3.5-turbo-0301", max_tokens=64):
     return response.choices[0].message['content'].strip()
 
 if __name__ == "__main__":
-    prompt = "What is the best game engine for beginners?"
+    prompt = "Sumarize pdf Kappa?"
     response = generate_response(prompt)
     print(response)
